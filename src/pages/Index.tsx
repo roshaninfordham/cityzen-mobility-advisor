@@ -4,52 +4,102 @@ import Header from '@/components/Header';
 import InputSection from '@/components/InputSection';
 import RecommendationCard from '@/components/RecommendationCard';
 import ResultsCards from '@/components/ResultsCards';
+import ParkingReminder from '@/components/ParkingReminder';
+import PremiumFeatures from '@/components/PremiumFeatures';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [currentTrip, setCurrentTrip] = useState({ origin: '', destination: '' });
+  const [showParkingReminder, setShowParkingReminder] = useState(false);
+  const [currentTrip, setCurrentTrip] = useState({ 
+    origin: '', 
+    destination: '', 
+    arrivalTime: '',
+    language: 'English'
+  });
 
-  // Mock data - this would be replaced with real API calls
+  // Mock data - enhanced with new features
   const mockResults = {
     recommendation: {
-      winner: 'transit' as const,
-      title: 'Take Public Transit',
-      explanation: 'Public transit will get you there 8 minutes faster and save you the hassle of finding parking in this busy area. The 4/5/6 trains are running normally with no reported delays.'
+      winner: 'driving' as const,
+      title: 'Drive & Use Smart Parking',
+      explanation: 'With our Premium AI parking scanner, you can find a legal spot 12 minutes faster than usual. The 4/5/6 trains have delays, making driving the better choice right now. Premium users save an average of $45/week on parking tickets.'
     },
     data: {
       driving: {
-        eta: 25,
-        traffic: 'Moderate',
-        parkingScore: 3,
-        parkingTime: 12,
-        totalTime: 37,
-        summary: 'Parking is challenging in this area on Saturday afternoons. Most street spots have 2-hour limits, and garage parking costs $15-25. Expect to circle for 10-15 minutes.'
+        eta: 22,
+        traffic: 'Light',
+        parkingScore: 7,
+        parkingTime: 8,
+        totalTime: 30,
+        summary: 'Great news! Our AI detected several 2-hour parking spots near your destination. Premium scanning shows optimal parking windows until 3:00 PM.'
       },
       transit: {
-        eta: 29,
+        eta: 35,
         cost: '$2.90',
         lines: ['4', '5', '6'],
-        status: 'Service running normally',
-        summary: 'The 4/5/6 express trains are running on schedule with normal weekend service. No construction or delays reported on your route.'
+        status: 'Minor delays reported',
+        summary: 'Signal problems at 59th St are causing 8-12 minute delays. Service should normalize by 2:00 PM according to MTA predictions.'
       }
     }
   };
 
-  const handleAnalyze = async (origin: string, destination: string) => {
+  // Mock parking reminder data
+  const mockParkingData = {
+    removalTime: '3:00 PM',
+    currentSpot: {
+      location: 'E 42nd St between Park & Lexington',
+      timeLeft: '2h 15m',
+      restrictions: '2 Hour Parking, 8AM-6PM Mon-Fri'
+    },
+    nearbySpots: [
+      {
+        id: '1',
+        distance: '0.2 miles',
+        availability: 'high' as const,
+        maxDuration: '4 hours',
+        restrictions: 'Free parking after 6PM',
+        rating: 5
+      },
+      {
+        id: '2',
+        distance: '0.3 miles',
+        availability: 'medium' as const,
+        maxDuration: '2 hours',
+        restrictions: 'Meter parking $3/hr',
+        rating: 4
+      },
+      {
+        id: '3',
+        distance: '0.4 miles',
+        availability: 'low' as const,
+        maxDuration: '1 hour',
+        restrictions: '1hr limit, street cleaning Wed',
+        rating: 3
+      }
+    ]
+  };
+
+  const handleAnalyze = async (origin: string, destination: string, arrivalTime?: string, language?: string) => {
     setIsLoading(true);
-    setCurrentTrip({ origin, destination });
+    setCurrentTrip({ origin, destination, arrivalTime: arrivalTime || '', language: language || 'English' });
     
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2500));
     
     setIsLoading(false);
     setShowResults(true);
+    
+    // Simulate parking reminder after analysis
+    setTimeout(() => {
+      setShowParkingReminder(true);
+    }, 3000);
   };
 
   const handleNewSearch = () => {
     setShowResults(false);
-    setCurrentTrip({ origin: '', destination: '' });
+    setShowParkingReminder(false);
+    setCurrentTrip({ origin: '', destination: '', arrivalTime: '', language: 'English' });
   };
 
   return (
@@ -58,7 +108,10 @@ const Index = () => {
         <Header />
         
         {!showResults ? (
-          <InputSection onAnalyze={handleAnalyze} isLoading={isLoading} />
+          <>
+            <InputSection onAnalyze={handleAnalyze} isLoading={isLoading} />
+            <PremiumFeatures />
+          </>
         ) : (
           <div className="space-y-8">
             {/* Trip Summary */}
@@ -66,6 +119,12 @@ const Index = () => {
               <h2 className="text-2xl font-semibold text-white mb-2">
                 {currentTrip.origin} → {currentTrip.destination}
               </h2>
+              {currentTrip.arrivalTime && (
+                <p className="text-blue-400 mb-1">Target arrival: {currentTrip.arrivalTime}</p>
+              )}
+              {currentTrip.language !== 'English' && (
+                <p className="text-green-400 mb-2">Language: {currentTrip.language}</p>
+              )}
               <button
                 onClick={handleNewSearch}
                 className="text-blue-400 hover:text-blue-300 transition-colors underline"
@@ -80,9 +139,22 @@ const Index = () => {
             {/* Results Cards */}
             <ResultsCards data={mockResults.data} />
 
+            {/* Parking Reminder (shows after a few seconds) */}
+            {showParkingReminder && (
+              <ParkingReminder 
+                removalTime={mockParkingData.removalTime}
+                currentSpot={mockParkingData.currentSpot}
+                nearbySpots={mockParkingData.nearbySpots}
+              />
+            )}
+
+            {/* Premium Upgrade Prompt */}
+            <PremiumFeatures />
+
             {/* Footer Info */}
             <div className="text-center mt-12 text-gray-500 text-sm">
               <p>Data updated in real-time • Saturday, June 28, 2025 at 12:28 PM EDT</p>
+              <p className="mt-1">🚀 Premium features: Parking sign AI • Live notifications • Ticket insurance</p>
             </div>
           </div>
         )}

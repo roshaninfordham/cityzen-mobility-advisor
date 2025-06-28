@@ -1,6 +1,7 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Camera, Crown, Shield } from 'lucide-react';
 
 interface ResultsData {
   driving: {
@@ -77,12 +78,34 @@ const ResultsCards = ({ data }: ResultsCardsProps) => {
               <div className="text-xs">(Google Maps Integration)</div>
             </div>
           </div>
+
+          {/* Premium Parking Sign Scanner */}
+          <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-lg p-4 border border-blue-500/30">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <Camera className="w-5 h-5 text-blue-400 mr-2" />
+                <h4 className="font-semibold text-blue-400">AI Parking Sign Scanner</h4>
+                <Crown className="w-4 h-4 text-yellow-400 ml-2" />
+              </div>
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                Scan Now
+              </Button>
+            </div>
+            <p className="text-gray-300 text-sm mb-2">
+              "NO PARKING 8AM-11AM MON WED FRI" → Safe to park until 8AM Monday
+            </p>
+            <div className="text-xs text-blue-400">✓ Sign detected and decoded instantly</div>
+          </div>
           
           <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-600">
             <h4 className="font-semibold text-white mb-2">Parking Analysis</h4>
             <p className="text-gray-300 text-sm">{data.driving.summary}</p>
             <div className="mt-2 text-xs text-gray-400">
               Est. parking time: {data.driving.parkingTime} minutes
+            </div>
+            <div className="mt-2 flex items-center text-xs text-green-400">
+              <Shield className="w-3 h-3 mr-1" />
+              Premium: Ticket protection active
             </div>
           </div>
         </CardContent>
@@ -107,7 +130,7 @@ const ResultsCards = ({ data }: ResultsCardsProps) => {
               <div className="text-sm text-gray-400">Cost</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">Normal</div>
+              <div className="text-2xl font-bold text-yellow-400">Delays</div>
               <div className="text-sm text-gray-400">Service Status</div>
             </div>
           </div>
@@ -125,12 +148,25 @@ const ResultsCards = ({ data }: ResultsCardsProps) => {
               ))}
             </div>
           </div>
+
+          {/* Premium Real-time Updates */}
+          <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-lg p-4 border border-green-500/30">
+            <div className="flex items-center mb-2">
+              <Crown className="w-4 h-4 text-yellow-400 mr-2" />
+              <h4 className="font-semibold text-green-400">Live MTA Intelligence</h4>
+            </div>
+            <div className="text-sm text-gray-300 space-y-1">
+              <div>🚨 Signal problem at 59th St cleared in 4 min</div>
+              <div>📱 Next train: 3 minutes (Live GPS tracking)</div>
+              <div>🎯 Alternative route via L train available</div>
+            </div>
+          </div>
           
           <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-600">
             <h4 className="font-semibold text-white mb-2">Transit Status</h4>
             <p className="text-gray-300 text-sm">{data.transit.summary}</p>
-            <div className="mt-2 text-xs text-green-400">
-              ✓ {data.transit.status}
+            <div className="mt-2 text-xs text-yellow-400">
+              ⚠️ {data.transit.status}
             </div>
           </div>
         </CardContent>
